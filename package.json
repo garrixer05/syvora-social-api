@@ -1,0 +1,29 @@
+{
+  "name": "syvora-social-api",
+  "type": "module",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prisma:dev:deploy": "npx prisma migrate deploy",
+    "dev:db:rm": "docker compose rm dev-db -s -f -v",
+    "dev:db:up": "docker compose up dev-db -d",
+    "dev:db:restart": "npm run dev:db:rm && npm run dev:db:up && sleep 1 && npm run prisma:dev:deploy",
+    "dev": "nodemon index.js"
+  },
+  "author": "Ankit Methaniya",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@prisma/client": "^5.19.1",
+    "argon2": "^0.41.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "express-validator": "^7.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "nodemon": "^3.1.4",
+    "prisma": "^5.19.1"
+  }
+}
