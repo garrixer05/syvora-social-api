@@ -22,11 +22,15 @@ export const createPost = async(req, res)=>{
                 let c = postCache.get(userId);
                 postCache.set(userId, c+1);
             }
-            postname = req.currUserUname+"_"+postCache.get(userId);
-
-            //Change the filepath to our desired path.
-            postData = `uploads/images/posts/`+postname+"."+req.file.originalname.split('.').pop();
-            renameSync(req.file.path, postData);
+            if(req.file){
+                postname = req.currUserUname+"_"+postCache.get(userId);
+    
+                //Change the filepath to our desired path.
+                postData = `uploads/images/posts/`+postname+"."+req.file.originalname.split('.').pop();
+                renameSync(req.file.path, postData);
+            }else{
+                return res.send({status:false, msg:"Post image required!", requiredField:"data"})
+            }
         }else{
             postData = req.body.data;
         }
@@ -59,9 +63,13 @@ export const updatePost = async(req, res)=>{
             unlinkSync(post.data)
         }
         if(isImage){
-            let postData = post.data;
-            renameSync(req.file.path, postData);
-            return res.send({status:true, post:post})
+            if(req.file){
+                let postData = post.data;
+                renameSync(req.file.path, postData);
+                return res.send({status:true, post:post})
+            }else{
+                return res.send({status:false, msg:"Post image required!", requiredField:"data"})
+            }
         }else{
             let newPost = await prisma.post.update({
                 where:{

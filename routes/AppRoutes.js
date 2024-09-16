@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { userCheck, verifyToken } from "../utils/HelperFuncs.js";
+import { userCheck, validateResults, verifyToken } from "../utils/HelperFuncs.js";
 import {
   createProfile,
   followUnfollowUsers,
@@ -8,8 +8,7 @@ import {
   viewUserProfile,
 } from "../controllers/AppControllers.js";
 import multer from "multer";
-import { profileValidateSchemaChain } from "../utils/Validator.js";
-import { validationResult } from "express-validator";
+import { followServiceValidateSchemaChain, profileValidateSchemaChain } from "../utils/Validator.js";
 
 const router = Router();
 
@@ -35,6 +34,8 @@ router.post(
   "/api/v1/app/createUserProfile",
   verifyToken,
   uploadImage.single("image"),
+  profileValidateSchemaChain,
+  validateResults,
   createProfile
 );
 router.put(
@@ -42,17 +43,9 @@ router.put(
   verifyToken,
   uploadImage.single("image"),
   profileValidateSchemaChain,
-  async (req, res, next) => {
-    const results = validationResult(req);
-    console.log(results);
-
-    if (!results.isEmpty()) {
-      return res.send({ errors: results.array() });
-    }
-    next();
-  },
+  validateResults,
   updateProfile
 );
-router.put("/api/v1/app/followUnfollow", verifyToken, userCheck, followUnfollowUsers)
+router.put("/api/v1/app/followUnfollow", verifyToken, userCheck, followServiceValidateSchemaChain, validateResults,followUnfollowUsers)
 
 export default router;

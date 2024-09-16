@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import { validationResult } from "express-validator";
 
 dotenv.config();
 let prismaInstance = null;
@@ -22,6 +23,9 @@ export const generateToken = (payload)=>{
 }
 export const verifyToken = async (req, res, next)=>{
     try {
+        if(!req.headers.authtoken){
+            return res.send({status:false, msg:"Unauthorized access! Auth header required!"})
+        }
         const {authtoken} = req.headers;
         const {id, email} = jwt.verify(authtoken, SECRET)
         req.currUserId = id;
@@ -47,4 +51,11 @@ export const userCheck = async (req, res, next)=>{
         console.log(error);
            
     }
+}
+export const validateResults = async (req, res, next) => {
+    const results = validationResult(req);
+    if (!results.isEmpty()) {
+      return res.send({ errors: results.array() });
+    }
+    next();
 }

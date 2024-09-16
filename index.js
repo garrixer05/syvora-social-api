@@ -18,7 +18,9 @@ app.use(express.json())
 app.use(AuthRoutes);
 app.use(AppRoutes);
 app.use(PostRoutes);
-
+app.get('*', (req, res)=>{
+    return res.status(404).send({msg:"Route not found"})
+})
 const PORT = process.env.PORT
 
 app.listen(4000, ()=>{

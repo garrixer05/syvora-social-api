@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { userCheck, verifyToken } from "../utils/HelperFuncs.js";
+import {
+  userCheck,
+  validateResults,
+  verifyToken,
+} from "../utils/HelperFuncs.js";
 import {
   commentOnPost,
   createPost,
@@ -11,6 +15,13 @@ import {
   updatePost,
 } from "../controllers/PostsController.js";
 import multer from "multer";
+import {
+  commentValidateSchemaChain,
+  getAllPostsValidateSchema,
+  getDeletePostValidateSchema,
+  likeUnlikePostValidateSchema,
+  postValidateSchemaChain,
+} from "../utils/Validator.js";
 
 const router = Router();
 const uploadImage = multer({
@@ -29,11 +40,35 @@ const uploadImage = multer({
   },
 });
 
-router.get("/api/v1/posts/getAllPosts", verifyToken, getAllPosts);
-router.get("/api/v1/posts/getPost", verifyToken, getPost);
+router.get(
+  "/api/v1/posts/getAllPosts",
+  verifyToken,
+  getAllPostsValidateSchema,
+  validateResults,
+  getAllPosts
+);
+router.get(
+  "/api/v1/posts/getPost",
+  verifyToken,
+  getDeletePostValidateSchema,
+  validateResults,
+  getPost
+);
 
-router.put("/api/v1/posts/likeUnlikePost", verifyToken, likeUnlikePost);
-router.post("/api/v1/posts/comment", verifyToken, commentOnPost);
+router.put(
+  "/api/v1/posts/likeUnlikePost",
+  verifyToken,
+  likeUnlikePostValidateSchema,
+  validateResults,
+  likeUnlikePost
+);
+router.post(
+  "/api/v1/posts/comment",
+  verifyToken,
+  commentValidateSchemaChain,
+  validateResults,
+  commentOnPost
+);
 router.delete(
   "/api/v1/posts/deleteComment",
   verifyToken,
@@ -46,6 +81,8 @@ router.post(
   verifyToken,
   uploadImage.single("data"),
   userCheck,
+  postValidateSchemaChain,
+  validateResults,
   createPost
 );
 router.put(
@@ -53,8 +90,17 @@ router.put(
   verifyToken,
   uploadImage.single("data"),
   userCheck,
+  postValidateSchemaChain,
+  validateResults,
   updatePost
 );
-router.delete("/api/v1/posts/deletePost", verifyToken, userCheck, deletePost);
+router.delete(
+  "/api/v1/posts/deletePost",
+  verifyToken,
+  userCheck,
+  getDeletePostValidateSchema,
+  validateResults,
+  deletePost
+);
 
 export default router;
