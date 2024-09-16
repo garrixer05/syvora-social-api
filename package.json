@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prisma:dev:deploy": "npx prisma migrate deploy",
+    "prisma:dev": "npx prisma migrate dev",
     "dev:db:rm": "docker compose rm dev-db -s -f -v",
     "dev:db:up": "docker compose up dev-db -d",
     "dev:db:restart": "npm run dev:db:rm && npm run dev:db:up && sleep 1 && npm run prisma:dev:deploy",
